@@ -1,1 +1,148 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="icon" href="/favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="description" content="Web site created using create-react-app"/><link rel="apple-touch-icon" href="/logo192.png"/><link rel="manifest" href="/manifest.json"/><script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=btTIhJdf2Z6qWOqvCaaAga4sTzRGluLoaeCa7pfZ"></script><script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=474158ab93846d7ed1cafbf521d65485&libraries=services,clusterer,drawing"></script><title>React App</title><script defer="defer" src="/static/js/main.02b94d57.js"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <form onsubmit="cal()">
+        <div>
+            <input id="키" type="number" placeholder="키">
+            <input id="몸무게" type="number" placeholder="몸무게">
+            <input id="나이" type="number" placeholder="나이">
+        </div>
+        <div>
+            성별
+            <input id="남자" type="radio" name="성별" checked="">남자
+            <input id="여자" type="radio" name="성별">여자
+        </div>
+        <input id="벌크업" type="radio" name="총대사량" checked="">벌크업 (+10%)
+        <input id="다이어트" type="radio" name="총대사량">다이어트 (-10%)
+        <div>
+            활동량
+            <input id="1" type="radio" name="활동량" checked="">거의 x
+            <input id="2" type="radio" name="활동량">가벼운 운동(주 1~3)
+            <input id="3" type="radio" name="활동량">보통수준(주 1~3)
+            <input id="4" type="radio" name="활동량">적극적(주 6~7)
+            <input id="5" type="radio" name="활동량">매우 적극적(주 6~7)
+        </div>
+        <div>
+            <input id="carb" type="number" placeholder="ex)50" checked="">탄수화물
+        </div>
+        <div>탄수화물 : 100g당 <input type="number" id="car" placeholder="ex)120kcal">kcal
+        </div>
+        <div>단백질 : 100g당 <input type="number" id="pro" placeholder="ex)120kcal">kcal
+        </div>
+        <div>지방 : 100g당 <input type="number" id="fat" placeholder="ex)120kcal">kcal</div>
+        <input type="submit"></input>
+    </form>
+    <div>
+        계산결과
+        <div id="result"></div>
+    </div>
+
+    <script>
+        //모든 계산 수행
+        function cal() {
+            event.preventDefault();
+            const howEat = carbo();
+            const car = $("#car").val();
+            const pro = $("#pro").val();
+            const fat = $("#fat").val();
+
+            document.getElementById("result").innerHTML = `
+            <div>탄수화물(kcal) : ${howEat.carb}</div>
+            <div>탄수화물(g) : ${howEat.carb / 4}g</div>
+            <div>먹어야 하는 식단(g) : ${(howEat.carb / car) * 100}g</div>
+            <div>단백질(kcal) : ${howEat.pro}</div>
+            <div>단백질(g) : ${howEat.pro / 4}g</div>
+            <div>먹어야 하는 식단(g) : ${(howEat.carb / pro) * 100}g</div>
+            <div>지방(kcal) : ${howEat.fat}</div>
+            <div>지방(g) : ${howEat.fat / 9}g</div>
+            <div>먹어야 하는 식단(g) : ${(howEat.carb / fat) * 100}g</div>
+            <div>활동대사량 : ${howEat.total}</div>
+            `
+        }
+
+        //기초대사량 
+        function baseCal() {
+            //결과
+            var result;
+
+            const height = $("#키").val();
+            const weight = $("#몸무게").val();
+            const age = $("#나이").val();
+            const male = $("#남자")[0].checked;
+            const female = $("#여자")[0].checked;
+
+            result = (10 * weight) + (6.25 * height) - (5 * age)
+
+            if (male === true) {
+                result = result + 5
+            } else {
+                result = result - 161
+            }
+
+            return result
+        }
+
+        //활동대사량
+        function playCal() {
+            const move1 = $("#1")[0].checked;
+            const move2 = $("#2")[0].checked;
+            const move3 = $("#3")[0].checked;
+            const move4 = $("#4")[0].checked;
+            const move5 = $("#5")[0].checked;
+            const base = baseCal();
+
+            if (move1 === true) {
+                return base * 1.2
+            } else if (move2 === true) {
+                return base * 1.375
+            } else if (move3 === true) {
+                return base * 1.55
+            } else if (move4 === true) {
+                return base * 1.725
+            } else if (move5 === true) {
+                return base * 1.9
+            }
+        }
+
+        //운동 목적
+        function purpose() {
+            const weightUp = $("#벌크업")[0].checked;
+            const weightDown = $("#다이어트")[0].checked;
+            const play = playCal()
+            const cal = play * 0.2
+
+            if (weightUp === true) {
+                return play + (play * 0.2)
+            } else {
+                return play - (play * 0.2)
+            }
+        }
+
+        //탄단지, 총 칼로리
+        function carbo() {
+            const purRe = purpose();
+            const carPercent = $("#carb").val() * 0.01;
+            const car = purRe * carPercent;
+            const pro = $("#몸무게").val() * 2 * 4;
+            const fat = purRe - pro - car
+
+            return {
+                total: purRe,
+                carb: car,
+                pro: pro,
+                fat: fat
+            }
+        }
+    </script>
+
+</body>
+
+</html>
