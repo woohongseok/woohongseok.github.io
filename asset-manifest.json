@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.js": "/static/js/main.baaa0285.js",
+    "main.js": "/static/js/main.bdbb3739.js",
     "static/media/luffy.jpg": "/static/media/luffy.15b72cb5a6af7aecd4a0.jpg",
     "index.html": "/index.html",
-    "main.baaa0285.js.map": "/static/js/main.baaa0285.js.map"
+    "main.bdbb3739.js.map": "/static/js/main.bdbb3739.js.map"
   },
   "entrypoints": [
-    "static/js/main.baaa0285.js"
+    "static/js/main.bdbb3739.js"
   ]
 }
